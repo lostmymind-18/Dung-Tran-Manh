@@ -19,9 +19,9 @@ import {
     TableCaption,
     TableContainer,
   } from '@chakra-ui/react'
-
 import Select from 'react-select'
 import { useState, useEffect } from 'react';
+import { BeatLoader } from 'react-spinners';
   
 function App() {
     const [currencyList, setCurrencyList] = useState([]);
@@ -29,6 +29,7 @@ function App() {
     const [inputValue, setInputValue] = useState(0);
     const [canSubmit, setCanSubmit] = useState(false);
     const [result, setResult] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     if(!canSubmit && selectedCurrency && inputValue > 0){
         setCanSubmit(true);
@@ -57,10 +58,15 @@ function App() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        const selectedPrice = selectedCurrency.price;
-        setResult(selectedPrice * inputValue);
-    }
+        setLoading(true);
+        
+        setTimeout(()=>{
+            setResult(selectedCurrency.price * inputValue);
+            setLoading(false);
+        }, 2000);
+        // const selectedPrice = selectedCurrency.price;
+        // setResult(selectedPrice * inputValue);
+    };
 
     const handleChange = (event) => {
         const inputValue = event.currentTarget.input.value;
@@ -74,19 +80,20 @@ function App() {
     }
 
     return <form onSubmit={handleSubmit} onChange={handleChange}>
-    <FormControl >
+    <FormControl isInvalid={!canSubmit}>
         <TableContainer>
         <Table variant='simple' size='md'>
             <TableCaption>Currency Swap Form</TableCaption>
             <Thead>
             <Tr>
-                <Th style={{width:"50%"}}>From Currency</Th>
-                <Th>To USD</Th>
+                <Th style={{width:"50%"}}><Heading>From Currency</Heading></Th>
+                <Th><Heading>To USD</Heading></Th>
             </Tr>
             </Thead>
             <Tbody>
             <Tr>
                 <Td>
+                    <FormLabel>Currency</FormLabel>
                     <Select options={currencyList} 
                         onChange={option=>{
                             setSelectedCurrency(option);
@@ -102,21 +109,20 @@ function App() {
                             </div>
                       )} 
                     />
-                    <FormHelperText>Chọn loại tiền tệ mà bạn muốn chuyển đổi.</FormHelperText>
+                    {(!selectedCurrency) && <FormErrorMessage style={{display:"inline"}}>A currency should be selected.</FormErrorMessage>}
                 </Td>
             </Tr>
             <Tr>
                 <Td>
+                    <FormLabel>Amount to be converted</FormLabel>
                     <NumberInput name='input'>
                         <NumberInputField />
                     </NumberInput>
-                    <FormHelperText>Nhập số lượng tiền tệ bạn muốn trao đổi.</FormHelperText>
+                    {!(inputValue > 0) && <FormErrorMessage>A positive number should be entered.</FormErrorMessage>}
                 </Td>
                 <Td>
-                    <NumberInput value={`${result}`}>
-                        <NumberInputField />
-                    </NumberInput>
-                    <FormHelperText>Lượng tiền đã được quy đổi</FormHelperText>
+                    <FormLabel style={{fontWeight:'bold'}}>Result</FormLabel>
+                      <strong>{`$ ${result}`}</strong>
                 </Td>
             </Tr>
             <Tr>
@@ -129,6 +135,7 @@ function App() {
                     >
                         Submit
                     </Button>
+                    {loading && <BeatLoader color="#36d7b7" />}
                 </Td>
             </Tr>
             </Tbody>
