@@ -75,7 +75,6 @@ function App() {
                 setCanSubmit(true);
         }else{
             setCanSubmit(false);
-            console.log("WTF");
         }
     }
 
@@ -102,7 +101,7 @@ function App() {
                             <div
                             style={{display:"flex"}}>
                                 <img 
-                                style={{marginRight:"5px"}}
+                                style={{marginRight:"5px",height:"30px",width:"30px"}}
                                 src={`https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${currency.label}.svg`} 
                                 alt={`${currency.label}-icon`} />
                                 <div style={{alignSelf:"center"}}>{currency.label}</div>
